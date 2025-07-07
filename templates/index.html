@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ポモドーロタイマー</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>🍅 ポモドーロタイマー</h1>
+        
+        <!-- タイマー表示部分 -->
+        <div class="timer-section">
+            <div id="status" class="status">準備完了</div>
+            <div id="timer-display" class="timer-display">25:00</div>
+            
+            <!-- 円形プログレスバー（Phase 3で実装） -->
+            <div class="progress-circle">
+                <!-- SVGプログレスバーをここに追加予定 -->
+            </div>
+        </div>
+        
+        <!-- コントロールボタン -->
+        <div class="controls">
+            <button id="start-btn" class="btn">開始</button>
+            <button id="reset-btn" class="btn">リセット</button>
+        </div>
+        
+        <!-- 進捗情報（Phase 4で本格実装） -->
+        <div class="progress-info">
+            <div class="stat">
+                <div class="stat-label">今日のセッション</div>
+                <div class="stat-value" id="today-sessions">0</div>
+            </div>
+            <div class="stat">
+                <div class="stat-label">累計集中時間</div>
+                <div class="stat-value" id="total-time">0分</div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="{{ url_for('static', filename='js/timer.js') }}"></script>
+</body>
+</html>
