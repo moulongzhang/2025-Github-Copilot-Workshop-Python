@@ -102,3 +102,4 @@ pytest --cov=pomodoro_timer
 - 段階的な機能実装
 - 拡張性の高いアーキテクチャ
 
+ワークショップの手順：https://moulongzhang.github.io/20250708-Github-Copilot-Workshop/github-copilot-workshop/#0
