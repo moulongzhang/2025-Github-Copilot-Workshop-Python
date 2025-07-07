@@ -1,3 +1,5 @@
+ワークショップの手順：https://moulongzhang.github.io/20250708-Github-Copilot-Workshop/github-copilot-workshop/#13
+
 # 🍅 ポモドーロタイマーWebアプリ
 
 美しいUIと進捗記録機能を持つポモドーロタイマーWebアプリケーションです。
@@ -99,3 +101,4 @@ pytest --cov=pomodoro_timer
 - 美しく使いやすいUI
 - 段階的な機能実装
 - 拡張性の高いアーキテクチャ
+
