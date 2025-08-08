@@ -4,7 +4,6 @@ from typing import List, Callable, Optional
 from dataclasses import dataclass, field
 from enum import Enum
 
-
 class EventArgs:
     """イベント引数の基底クラス"""
     pass
