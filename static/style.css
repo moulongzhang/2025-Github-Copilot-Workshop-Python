@@ -1,0 +1,81 @@
+body {
+    background: #7b6ef6;
+    font-family: 'Segoe UI', sans-serif;
+}
+.container {
+    background: #fff;
+    border-radius: 24px;
+    width: 340px;
+    margin: 40px auto;
+    padding: 32px 24px 24px 24px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+}
+h2 {
+    margin: 0 0 16px 0;
+    font-size: 1.3em;
+    color: #333;
+}
+.timer-circle {
+    position: relative;
+    width: 180px;
+    height: 180px;
+    margin: 0 auto 16px auto;
+}
+.timer-label {
+    position: absolute;
+    top: 48px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    color: #888;
+    font-size: 1.1em;
+}
+.timer-time {
+    position: absolute;
+    top: 70px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    font-size: 2.5em;
+    font-weight: bold;
+    color: #222;
+}
+.buttons {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+#start-btn {
+    background: linear-gradient(90deg, #7b6ef6, #5f5be6);
+    color: #fff;
+    border: none;
+    border-radius: 24px;
+    padding: 10px 32px;
+    font-size: 1em;
+    cursor: pointer;
+}
+#reset-btn {
+    background: #fff;
+    color: #7b6ef6;
+    border: 2px solid #7b6ef6;
+    border-radius: 24px;
+    padding: 10px 32px;
+    font-size: 1em;
+    cursor: pointer;
+}
+.progress {
+    background: #f5f6fa;
+    border-radius: 12px;
+    padding: 16px;
+    margin-top: 16px;
+    text-align: center;
+}
+.progress-row {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 8px;
+}
+.progress-row div {
+    font-size: 1.1em;
+}

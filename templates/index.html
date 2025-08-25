@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>ポモドーロタイマー</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="container">
+    <h2>ポモドーロタイマー</h2>
+    <div class="timer-circle">
+        <svg width="180" height="180">
+            <circle cx="90" cy="90" r="80" stroke="#e5e7eb" stroke-width="12" fill="none"/>
+            <circle id="progress" cx="90" cy="90" r="80" stroke="#7b6ef6" stroke-width="12" fill="none"
+                    stroke-dasharray="502" stroke-dashoffset="0" transform="rotate(-90 90 90)"/>
+        </svg>
+        <div class="timer-label" id="timer-label">作業中</div>
+        <div class="timer-time" id="timer">25:00</div>
+    </div>
+    <div class="buttons">
+        <button id="start-btn">開始</button>
+        <button id="reset-btn">リセット</button>
+    </div>
+    <div class="progress">
+        <div>今日の進捗</div>
+        <div class="progress-row">
+            <div>
+                <span id="pomodoro-count">4</span><br>完了
+            </div>
+            <div>
+                <span id="focus-time">1時間40分</span><br>集中時間
+            </div>
+        </div>
+    </div>
+</div>
+<script src="{{ url_for('static', filename='timer.js') }}"></script>
+</body>
+</html>
