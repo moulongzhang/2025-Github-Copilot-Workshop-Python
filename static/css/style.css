@@ -203,8 +203,9 @@ body {
 }
 
 .action-buttons .btn {
-    flex: 1;
-    max-width: 200px;
+    min-width: 180px;
+    width: 180px;
+    flex-shrink: 0;
 }
 
 .settings-section {
