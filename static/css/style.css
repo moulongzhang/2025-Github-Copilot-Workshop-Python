@@ -1,0 +1,88 @@
+body {
+    background: linear-gradient(180deg, #7b83eb 0%, #aab6f6 100%);
+    min-height: 100vh;
+    margin: 0;
+    font-family: 'Segoe UI', 'Meiryo', sans-serif;
+}
+.container {
+    background: #fff;
+    border-radius: 24px;
+    box-shadow: 0 4px 24px rgba(123, 131, 235, 0.15);
+    width: 340px;
+    margin: 40px auto;
+    padding: 32px 24px 24px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+h1 {
+    font-size: 1.3rem;
+    font-weight: bold;
+    margin-bottom: 24px;
+    color: #333;
+}
+.timer-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.circle-timer {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    margin-bottom: 24px;
+}
+.timer-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+#timer-label {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 4px;
+}
+#timer {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #222;
+}
+.button-row {
+    display: flex;
+    gap: 16px;
+    margin-top: 8px;
+}
+button.primary {
+    background: linear-gradient(90deg, #7b83eb 0%, #aab6f6 100%);
+    color: #fff;
+    border: none;
+    border-radius: 24px;
+    padding: 10px 32px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(123, 131, 235, 0.10);
+    transition: background 0.2s;
+}
+button.primary:hover {
+    background: linear-gradient(90deg, #6a74d6 0%, #8e9be0 100%);
+}
+button.secondary {
+    background: #fff;
+    color: #7b83eb;
+    border: 2px solid #7b83eb;
+    border-radius: 24px;
+    padding: 10px 32px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+button.secondary:hover {
+    background: #f3f4fa;
+    color: #5a62b6;
+}
