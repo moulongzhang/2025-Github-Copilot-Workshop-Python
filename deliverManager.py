@@ -9,25 +9,33 @@ class EventArgs:
     """イベント引数の基底クラス"""
     pass
 
+class RecipeSpawnedEventArgs(EventArgs):
+    def __init__(self, recipe):
+        self.recipe = recipe
+
+class RecipeCompletedEventArgs(EventArgs):
+    def __init__(self, recipe):
+        self.recipe = recipe
+
+class RecipeFailedEventArgs(EventArgs):
+    def __init__(self, plate):
+        self.plate = plate
+
 
 class Event:
     """C#のeventに相当するクラス"""
-    
     def __init__(self):
         self._handlers: List[Callable] = []
-    
+
     def add_handler(self, handler: Callable):
-        """イベントハンドラーを追加"""
         if handler not in self._handlers:
             self._handlers.append(handler)
-    
+
     def remove_handler(self, handler: Callable):
-        """イベントハンドラーを削除"""
         if handler in self._handlers:
             self._handlers.remove(handler)
-    
+
     def invoke(self, sender, args: EventArgs = None):
-        """イベントを発火"""
         for handler in self._handlers:
             handler(sender, args or EventArgs())
 
@@ -95,106 +103,91 @@ class KitchenGameManager:
         self._is_game_playing = False
 
 
-class DeliveryManager:
-    def get_recipe_by_name(self, user_input):
-        query = f"SELECT * FROM recipes WHERE name = '{user_input}'"
-        print(f"実行クエリ: {query}")
-        return query
-    
-    """配達管理クラス（Python版）"""
-    
-    _instance: Optional['DeliveryManager'] = None
-    
+class RecipeManager:
+    """レシピ管理専用クラス"""
     def __init__(self, recipe_list_so: RecipeListSO):
-        # イベント定義
+        self._recipe_list_so = recipe_list_so
+
+    def get_random_recipe(self) -> RecipeSO:
+        return random.choice(self._recipe_list_so.recipe_so_list)
+
+    def get_recipe_by_name(self, user_input, cursor):
+        # SQLインジェクション対策: パラメータ化クエリ
+        try:
+            cursor.execute("SELECT * FROM recipes WHERE name = ?", (user_input,))
+            return cursor.fetchall()
+        except Exception as e:
+            print(f"DBエラー: {e}")
+            return []
+
+class EventManager:
+    """イベント管理専用クラス"""
+    def __init__(self):
         self.on_recipe_spawned = Event()
         self.on_recipe_completed = Event()
         self.on_recipe_success = Event()
         self.on_recipe_failed = Event()
-        
-        # プライベート変数
-        self._recipe_list_so = recipe_list_so
+
+class DeliveryManager:
+    """配達管理クラス（Python版）"""
+    _instance: Optional['DeliveryManager'] = None
+
+    def __new__(cls, *args, **kwargs):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+        return cls._instance
+
+    def __init__(self, recipe_list_so: RecipeListSO):
+        if hasattr(self, '_initialized') and self._initialized:
+            return
+        self._initialized = True
+        self.recipe_manager = RecipeManager(recipe_list_so)
+        self.event_manager = EventManager()
         self._waiting_recipe_so_list: List[RecipeSO] = []
         self._spawn_recipe_timer = 0.0
         self._spawn_recipe_timer_max = 4.0
         self._waiting_recipes_max = 4
         self._successful_recipes_amount = 0
         self._last_update_time = time.time()
-    
+
     @classmethod
     def get_instance(cls, recipe_list_so: RecipeListSO = None) -> 'DeliveryManager':
-        """Singletonインスタンスを取得"""
         if cls._instance is None:
             if recipe_list_so is None:
                 raise ValueError("初回作成時にはrecipe_list_soが必要です")
             cls._instance = cls(recipe_list_so)
         return cls._instance
-    
+
     def update(self):
-        """フレーム更新処理（UnityのUpdate相当）"""
         current_time = time.time()
         delta_time = current_time - self._last_update_time
         self._last_update_time = current_time
-        
         self._spawn_recipe_timer -= delta_time
-        
         if self._spawn_recipe_timer <= 0.0:
             self._spawn_recipe_timer = self._spawn_recipe_timer_max
-            
             kitchen_game_manager = KitchenGameManager.get_instance()
             if (kitchen_game_manager.is_game_playing() and 
                 len(self._waiting_recipe_so_list) < self._waiting_recipes_max):
-                
-                # ランダムにレシピを選択
-                waiting_recipe_so = random.choice(self._recipe_list_so.recipe_so_list)
+                waiting_recipe_so = self.recipe_manager.get_random_recipe()
                 self._waiting_recipe_so_list.append(waiting_recipe_so)
-                
-                # イベント発火
-                self.on_recipe_spawned.invoke(self)
-    
+                self.event_manager.on_recipe_spawned.invoke(self, RecipeSpawnedEventArgs(waiting_recipe_so))
+
     def deliver_recipe(self, plate_kitchen_object: PlateKitchenObject):
-        """レシピの材料と皿の材料が一致しているかどうかを確認する"""
-        
+        plate_ingredients = set(plate_kitchen_object.get_kitchen_object_so_list())
         for i, waiting_recipe_so in enumerate(self._waiting_recipe_so_list):
-            plate_ingredients = plate_kitchen_object.get_kitchen_object_so_list()
-            
-            # 材料数が一致するかチェック
-            if len(waiting_recipe_so.kitchen_object_so_list) == len(plate_ingredients):
-                plate_contents_matches_recipe = True
-                
-                # レシピの各材料をチェック
-                for recipe_kitchen_object_so in waiting_recipe_so.kitchen_object_so_list:
-                    ingredient_found = False
-                    
-                    # 皿の材料と照合
-                    for plate_kitchen_object_so in plate_ingredients:
-                        if plate_kitchen_object_so == recipe_kitchen_object_so:
-                            ingredient_found = True
-                            break
-                    
-                    if not ingredient_found:
-                        plate_contents_matches_recipe = False
-                        break
-                
-                # 材料が完全に一致した場合
-                if plate_contents_matches_recipe:
-                    self._successful_recipes_amount += 1
-                    self._waiting_recipe_so_list.pop(i)
-                    
-                    # 成功イベント発火
-                    self.on_recipe_completed.invoke(self)
-                    self.on_recipe_success.invoke(self)
-                    return
-        
-        # 一致するレシピが見つからなかった場合
-        self.on_recipe_failed.invoke(self)
-    
+            recipe_ingredients = set(waiting_recipe_so.kitchen_object_so_list)
+            if plate_ingredients == recipe_ingredients:
+                self._successful_recipes_amount += 1
+                self._waiting_recipe_so_list.pop(i)
+                self.event_manager.on_recipe_completed.invoke(self, RecipeCompletedEventArgs(waiting_recipe_so))
+                self.event_manager.on_recipe_success.invoke(self, RecipeCompletedEventArgs(waiting_recipe_so))
+                return
+        self.event_manager.on_recipe_failed.invoke(self, RecipeFailedEventArgs(plate_kitchen_object))
+
     def get_waiting_recipe_so_list(self) -> List[RecipeSO]:
-        """待機中のレシピリストを取得"""
         return self._waiting_recipe_so_list.copy()
-    
+
     def get_successful_recipes_amount(self) -> int:
-        """成功したレシピ数を取得"""
         return self._successful_recipes_amount
 
 
