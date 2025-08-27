@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+
+{% block content %}
+<main class="main-container">
+    <!-- ヘッダー -->
+    <header class="app-header">
+        <h1 class="app-title">🍅 ポモドーロタイマー</h1>
+        <p class="app-subtitle">生産性向上のためのタイマーアプリケーション</p>
+    </header>
+
+    <!-- タイマー表示エリア -->
+    <section class="timer-section" aria-live="polite" aria-label="タイマー表示">
+        <div class="timer-display">
+            <div class="timer-circle">
+                <svg class="timer-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                    <!-- 背景円 -->
+                    <circle cx="100" cy="100" r="90" fill="none" stroke="#f0f0f0" stroke-width="8"/>
+                    <!-- プログレス円 -->
+                    <circle id="progress-circle" cx="100" cy="100" r="90" fill="none" 
+                            stroke="#e74c3c" stroke-width="8" stroke-linecap="round"
+                            transform="rotate(-90 100 100)" 
+                            stroke-dasharray="565.49" stroke-dashoffset="565.49"/>
+                </svg>
+                
+                <!-- 時間表示 -->
+                <div class="timer-time">
+                    <span id="timer-display" class="time-text">25:00</span>
+                    <span id="timer-mode" class="mode-text">作業時間</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- セッション情報 -->
+        <div class="session-info">
+            <div class="session-counter">
+                <span class="counter-label">完了セッション</span>
+                <span id="session-count" class="counter-value">0</span>
+            </div>
+            <div class="current-mode">
+                <span id="current-mode" class="mode-indicator">集中モード</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- コントロールボタン -->
+    <section class="controls-section">
+        <div class="timer-controls">
+            <button id="start-btn" class="btn btn-primary" aria-label="タイマー開始">
+                <span class="btn-icon">▶️</span>
+                <span class="btn-text">開始</span>
+            </button>
+            <button id="pause-btn" class="btn btn-secondary" aria-label="タイマー一時停止" disabled>
+                <span class="btn-icon">⏸️</span>
+                <span class="btn-text">一時停止</span>
+            </button>
+            <button id="reset-btn" class="btn btn-tertiary" aria-label="タイマーリセット">
+                <span class="btn-icon">🔄</span>
+                <span class="btn-text">リセット</span>
+            </button>
+            <button id="skip-btn" class="btn btn-quaternary" aria-label="セッションスキップ">
+                <span class="btn-icon">⏭️</span>
+                <span class="btn-text">スキップ</span>
+            </button>
+        </div>
+    </section>
+
+    <!-- 設定パネル -->
+    <section class="settings-section">
+        <button id="settings-toggle" class="settings-toggle" aria-label="設定パネルを開く">
+            <span class="settings-icon">⚙️</span>
+            設定
+        </button>
+
+        <div id="settings-panel" class="settings-panel" role="region" aria-label="タイマー設定">
+            <h3 class="settings-title">タイマー設定</h3>
+            
+            <div class="settings-grid">
+                <div class="setting-group">
+                    <label for="work-duration" class="setting-label">作業時間（分）</label>
+                    <input type="number" id="work-duration" class="setting-input" 
+                           value="25" min="1" max="60" aria-describedby="work-duration-desc">
+                    <small id="work-duration-desc" class="setting-desc">1-60分の間で設定できます</small>
+                </div>
+
+                <div class="setting-group">
+                    <label for="short-break" class="setting-label">短休憩時間（分）</label>
+                    <input type="number" id="short-break" class="setting-input" 
+                           value="5" min="1" max="30" aria-describedby="short-break-desc">
+                    <small id="short-break-desc" class="setting-desc">1-30分の間で設定できます</small>
+                </div>
+
+                <div class="setting-group">
+                    <label for="long-break" class="setting-label">長休憩時間（分）</label>
+                    <input type="number" id="long-break" class="setting-input" 
+                           value="15" min="1" max="60" aria-describedby="long-break-desc">
+                    <small id="long-break-desc" class="setting-desc">1-60分の間で設定できます</small>
+                </div>
+
+                <div class="setting-group">
+                    <label for="sessions-until-long-break" class="setting-label">長休憩までのセッション数</label>
+                    <input type="number" id="sessions-until-long-break" class="setting-input" 
+                           value="4" min="1" max="10" aria-describedby="sessions-desc">
+                    <small id="sessions-desc" class="setting-desc">1-10セッションの間で設定できます</small>
+                </div>
+            </div>
+
+            <div class="settings-options">
+                <div class="checkbox-group">
+                    <input type="checkbox" id="auto-start-breaks" class="setting-checkbox">
+                    <label for="auto-start-breaks" class="checkbox-label">休憩時間を自動開始</label>
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="auto-start-work" class="setting-checkbox">
+                    <label for="auto-start-work" class="checkbox-label">作業時間を自動開始</label>
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="sound-notifications" class="setting-checkbox" checked>
+                    <label for="sound-notifications" class="checkbox-label">音声通知</label>
+                </div>
+            </div>
+
+            <div class="settings-actions">
+                <button id="save-settings" class="btn btn-primary">設定保存</button>
+                <button id="reset-settings" class="btn btn-tertiary">デフォルトに戻す</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 統計・履歴パネル（将来の拡張用） -->
+    <section class="stats-section" style="display: none;">
+        <h3 class="stats-title">今日の統計</h3>
+        <div class="stats-grid">
+            <div class="stat-item">
+                <span class="stat-value" id="today-sessions">0</span>
+                <span class="stat-label">完了セッション</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-value" id="today-focus-time">0分</span>
+                <span class="stat-label">集中時間</span>
+            </div>
+        </div>
+    </section>
+</main>
+
+<!-- 通知・アラート用のモーダル -->
+<div id="notification-modal" class="modal" role="dialog" aria-labelledby="modal-title" aria-hidden="true">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="modal-title" class="modal-title"></h2>
+            <button id="modal-close" class="modal-close" aria-label="モーダルを閉じる">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p id="modal-message"></p>
+        </div>
+        <div class="modal-footer">
+            <button id="modal-confirm" class="btn btn-primary">OK</button>
+        </div>
+    </div>
+</div>
+
+<!-- アクセシビリティ用のスクリーンリーダー専用テキスト -->
+<div id="sr-announcements" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+{% endblock %}
