@@ -5,5 +5,12 @@
     "duration": 600,
     "completed_at": "2025-08-27T06:55:19.934639",
     "pomodoro_count": 0
+  },
+  {
+    "id": "20250829_094135",
+    "session_type": "work",
+    "duration": 600,
+    "completed_at": "2025-08-29T09:41:35.687346",
+    "pomodoro_count": 0
   }
 ]
