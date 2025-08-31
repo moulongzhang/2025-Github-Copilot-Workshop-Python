@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>ポモドーロタイマー</title>
+    <style>
+        .header-img {
+            display: block;
+            margin: 0 auto 8px auto;
+            width: 48px;
+            height: 48px;
+        }
+        .timer-status {
+            margin-bottom: 8px;
+            color: #666;
+            font-size: 1.1rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .status-work { color: #7b6fdc; }
+        .status-break { color: #2bb673; }
+        .status-stop { color: #888; }
+        .status-end { color: #e74c3c; animation: flash 0.7s 2; }
+        .status-icon {
+            font-size: 1.3rem;
+        }
+        @keyframes flash {
+            0% { color: #e74c3c; }
+            50% { color: #fff; }
+            100% { color: #e74c3c; }
+        }
+        .btn {
+            transition: box-shadow 0.2s, transform 0.2s;
+        }
+        .btn:hover {
+            box-shadow: 0 2px 8px rgba(123,111,220,0.15);
+            transform: translateY(-2px) scale(1.05);
+        }
+        .btn:active {
+            box-shadow: none;
+            transform: scale(0.98);
+        }
+        .timer-time.end {
+            color: #e74c3c;
+            animation: flash 0.7s 2;
+        }
+        body {
+            background: #7b6fdc;
+            font-family: 'Segoe UI', 'Meiryo', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            background: #f7f7fb;
+            border-radius: 24px;
+            width: 350px;
+            margin: 40px auto;
+            padding: 32px 24px 24px 24px;
+            box-shadow: 0 8px 32px rgba(123,111,220,0.2);
+        }
+        h1 {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 16px;
+        }
+        .timer {
+            text-align: center;
+            margin: 32px 0 24px 0;
+        }
+        .timer-circle {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: #eaeaf2;
+            margin: 0 auto 16px auto;
+            position: relative;
+        }
+        .timer-time {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #333;
+        }
+        .timer-status {
+            margin-bottom: 8px;
+            color: #666;
+        }
+        .btns {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .btn {
+            padding: 10px 32px;
+            border-radius: 24px;
+            border: none;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .btn-start {
+            background: linear-gradient(90deg, #7b6fdc 60%, #a6a1e6 100%);
+            color: #fff;
+        }
+        .btn-reset {
+            background: #fff;
+            color: #7b6fdc;
+            border: 2px solid #a6a1e6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="/static/img/pomodoro.png" alt="Pomodoro" class="header-img" onerror="this.style.display='none'">
+        <h1>ポモドーロタイマー</h1>
+        <div class="timer">
+            <div class="timer-status status-stop" id="status"><span class="status-icon">⏸️</span>停止中</div>
+            <div class="timer-circle">
+                <svg width="180" height="180" id="circleSvg">
+                    <circle cx="90" cy="90" r="80" stroke="#eaeaf2" stroke-width="16" fill="none" />
+                    <circle cx="90" cy="90" r="80" stroke="#7b6fdc" stroke-width="16" fill="none" id="progressCircle" stroke-linecap="round" transform="rotate(-90 90 90)" />
+                </svg>
+                <div class="timer-time" id="timer">25:00</div>
+            </div>
+        </div>
+        <div class="btns">
+            <button class="btn btn-start" id="startBtn">開始</button>
+            <button class="btn btn-reset" id="resetBtn">リセット</button>
+        </div>
+        <div style="text-align:center; margin-bottom:16px;">
+            <label>作業時間 <input type="number" id="workInput" value="25" min="1" max="60" style="width:48px;"> 分</label>
+            <label style="margin-left:16px;">休憩時間 <input type="number" id="breakInput" value="5" min="1" max="30" style="width:48px;"> 分</label>
+        </div>
+        <div id="progressArea" style="background:#f7f7fb; border-radius:16px; margin-top:16px; padding:16px; text-align:center;">
+            <div style="font-size:1rem; color:#666;">今日の進捗</div>
+            <div style="display:flex; justify-content:center; align-items:flex-end; gap:32px; margin-top:8px;">
+                <div style="display:flex; flex-direction:column; align-items:center;">
+                    <div id="countDisplay" style="font-size:2rem; font-weight:bold; color:#7b6fdc; line-height:1;">0</div>
+                    <div style="font-size:0.9rem; color:#888; margin-top:2px;">完了</div>
+                </div>
+                <div style="display:flex; flex-direction:column; align-items:center;">
+                    <div id="focusDisplay" style="font-size:2rem; font-weight:bold; color:#7b6fdc; line-height:1;">0分</div>
+                    <div style="font-size:0.9rem; color:#888; margin-top:2px;">集中時間</div>
+                </div>
+            </div>
+            <div id="historyArea" style="margin-top:16px; text-align:left;">
+                <div style="font-size:0.95rem; color:#666; margin-bottom:4px;">履歴（最新20件）</div>
+                <ul id="historyList" style="padding-left:16px; margin:0;"></ul>
+            </div>
+        </div>
+    </div>
+    <script>
+        // ポモドーロタイマーJS（第3段階）
+        let workTime = 25 * 60;
+        let breakTime = 5 * 60;
+        let timer = workTime;
+        let timerInterval = null;
+        let isRunning = false;
+        let isWork = true;
+        let completedCount = 0;
+        let focusSeconds = 0;
+
+        const timerDisplay = document.getElementById('timer');
+        const startBtn = document.getElementById('startBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const statusDisplay = document.getElementById('status');
+        const workInput = document.getElementById('workInput');
+        const breakInput = document.getElementById('breakInput');
+        const progressCircle = document.getElementById('progressCircle');
+        const countDisplay = document.getElementById('countDisplay');
+        const focusDisplay = document.getElementById('focusDisplay');
+
+        // 円グラフ用
+        const circleLength = 2 * Math.PI * 80;
+        progressCircle.setAttribute('stroke-dasharray', circleLength);
+
+        function updateDisplay() {
+            const min = String(Math.floor(timer / 60)).padStart(2, '0');
+            const sec = String(timer % 60).padStart(2, '0');
+            timerDisplay.textContent = `${min}:${sec}`;
+            // 円グラフ進捗
+            let percent = isWork ? (timer / workTime) : (timer / breakTime);
+            progressCircle.setAttribute('stroke-dashoffset', -circleLength * (1 - percent));
+        }
+
+        function setStatus(text) {
+            let icon = '';
+            let cls = '';
+            if (text === '作業中') {
+                icon = '💼'; cls = 'status-work';
+            } else if (text === '休憩中') {
+                icon = '☕'; cls = 'status-break';
+            } else if (text === '停止中') {
+                icon = '⏸️'; cls = 'status-stop';
+            } else if (text === '終了！') {
+                icon = '✅'; cls = 'status-end';
+            }
+            statusDisplay.className = `timer-status ${cls}`;
+            statusDisplay.innerHTML = `<span class='status-icon'>${icon}</span>${text}`;
+            // タイマー数字の強調
+            if (text === '終了！') {
+                timerDisplay.classList.add('end');
+            } else {
+                timerDisplay.classList.remove('end');
+            }
+        }
+
+        function updateProgress() {
+            countDisplay.textContent = completedCount;
+            let min = Math.floor(focusSeconds / 60);
+            let sec = focusSeconds % 60;
+            focusDisplay.textContent = min > 0 ? `${min}分${sec > 0 ? sec + '秒' : ''}` : `${sec}秒`;
+        }
+
+        function startTimer() {
+            if (isRunning) return;
+            isRunning = true;
+            setStatus(isWork ? '作業中' : '休憩中');
+            timerInterval = setInterval(() => {
+                if (timer > 0) {
+                    timer--;
+                    if (isWork) focusSeconds++;
+                    updateDisplay();
+                    updateProgress();
+                } else {
+                    clearInterval(timerInterval);
+                    if (isWork) {
+                        // 作業終了→休憩開始
+                        completedCount++;
+                        updateProgress();
+                        saveHistoryToServer(Math.round(workTime/60));
+                        isWork = false;
+                        timer = breakTime;
+                        setStatus('休憩中');
+                        startTimer();
+                    } else {
+                        // 休憩終了→作業開始
+                        isWork = true;
+                        timer = workTime;
+                        setStatus('作業中');
+                        startTimer();
+                    }
+                }
+            }, 1000);
+        }
+
+        // 履歴保存API呼び出し
+        function saveHistoryToServer(workMin) {
+            fetch('/api/history', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ work_minutes: workMin })
+            }).then(res => res.json()).then(() => {
+                fetchHistoryFromServer();
+            });
+        }
+
+        // 履歴取得API呼び出し
+        function fetchHistoryFromServer() {
+            fetch('/api/history').then(res => res.json()).then(data => {
+                const list = document.getElementById('historyList');
+                list.innerHTML = '';
+                data.forEach(item => {
+                    const li = document.createElement('li');
+                    const dt = new Date(item.timestamp);
+                    li.textContent = `${dt.toLocaleString('ja-JP', {hour: '2-digit', minute: '2-digit'})} - ${item.work_minutes}分`;
+                    list.appendChild(li);
+                });
+            });
+        }
+
+        function resetTimer() {
+            clearInterval(timerInterval);
+            workTime = parseInt(workInput.value) * 60;
+            breakTime = parseInt(breakInput.value) * 60;
+            isWork = true;
+            timer = workTime;
+            setStatus('停止中');
+            isRunning = false;
+            // 今日の進捗はリセットしない
+            updateDisplay();
+            updateProgress();
+        }
+
+        workInput.addEventListener('change', resetTimer);
+        breakInput.addEventListener('change', resetTimer);
+        startBtn.addEventListener('click', startTimer);
+        resetBtn.addEventListener('click', resetTimer);
+
+    // 初期表示
+    updateDisplay();
+    setStatus('停止中');
+    updateProgress();
+    fetchHistoryFromServer();
+    </script>
+</body>
+</html>
