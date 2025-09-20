@@ -1,0 +1,12 @@
+{
+  "name": "pomodoro-timer",
+  "version": "0.1.0",
+  "description": "Pomodoro timer app (front-end tests + backend tests)",
+  "type": "module",
+  "scripts": {
+    "test:js": "node --test",
+    "test:py": "pytest -q",
+    "test": "npm run test:js && pytest -q"
+  },
+  "license": "MIT"
+}

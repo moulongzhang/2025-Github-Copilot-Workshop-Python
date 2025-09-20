@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Pomodoro Timer</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+  </head>
+  <body>
+    <main class="container">
+      <h1>Pomodoro Timer</h1>
+      <div id="timer" class="timer">
+        <div id="time-display">25:00</div>
+        <div class="controls">
+          <button id="start-btn">Start</button>
+          <button id="pause-btn">Pause</button>
+          <button id="reset-btn">Reset</button>
+        </div>
+      </div>
+    </main>
+
+    <!-- timer-ui is an ES module that imports timer-core -->
+    <script type="module" src="/static/js/timer-ui.js"></script>
+  </body>
+</html>
