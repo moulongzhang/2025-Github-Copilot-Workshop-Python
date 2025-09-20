@@ -12,15 +12,22 @@ jobs:
 
     strategy:
       matrix:
-        python-version: [3.10]
-        node-version: [20]
+        # Be explicit with strings to avoid accidental YAML number parsing (e.g. `3.1` -> 3.1)
+        python-version: [ '3.10' ]
+        node-version: [ '20' ]
 
     steps:
       - uses: actions/checkout@v4
 
+      - name: Debug matrix
+        run: |
+          echo "Matrix python-version = '${{ matrix.python-version }}'"
+          echo "Runner OS = $RUNNER_OS"
+
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
+          # Use an explicit patch/minor version or major+minor (e.g. '3.10' or '3.10.x')
           python-version: ${{ matrix.python-version }}
 
       - name: Setup Node.js
