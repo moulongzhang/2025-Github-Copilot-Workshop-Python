@@ -1,0 +1,32 @@
+# 本番依存関係を含める
+-r requirements.txt
+
+# テストフレームワーク
+pytest==7.4.3
+pytest-cov==4.1.0
+pytest-flask==1.3.0
+pytest-mock==3.12.0
+
+# テストデータ生成
+factory-boy==3.3.0
+
+# 時間のモック化
+freezegun==1.2.2
+
+# HTTPテスト
+pytest-httpserver==1.0.8
+
+# 非同期テスト
+pytest-asyncio==0.21.1
+
+# テストレポート
+pytest-html==4.1.1
+pytest-xdist==3.3.1
+
+# リンター・フォーマッター
+black==23.11.0
+flake8==6.1.0
+mypy==1.7.1
+
+# セキュリティチェック
+bandit==1.7.5
