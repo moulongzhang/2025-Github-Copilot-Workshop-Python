@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>ポモドーロタイマー</title>
+    <link rel="stylesheet" href="/static/css/style.css" />
+  </head>
+  <body>
+    <main class="container">
+      <h1>ポモドーロタイマー</h1>
+
+      <div id="state">状態: <span id="status">停止中</span></div>
+
+      <div class="timer">
+        <div id="time">25:00</div>
+      </div>
+
+      <div class="controls">
+        <button id="start">開始</button>
+        <button id="pause">一時停止</button>
+        <button id="reset">リセット</button>
+        <!-- デバッグ: すぐに 00:00 を確認するためのショートカット -->
+        <button id="dbg30" style="background:#eee;color:#333;border:1px solid #ccc;padding:6px 10px;font-size:12px;">デバッグ: 30秒で完了</button>
+      </div>
+    </main>
+
+    <script src="/static/js/timer.js"></script>
+  </body>
+</html>
