@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>キッチンゲーム - 進捗管理</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .stat {
+            font-size: 3em;
+            font-weight: bold;
+            color: #764ba2;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .recipe-list {
+            list-style: none;
+        }
+
+        .recipe-item {
+            background: #f8f9fa;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .recipe-name {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .ingredients {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .ingredient-tag {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 12px;
+            margin-right: 5px;
+            margin-top: 5px;
+            font-size: 0.85em;
+        }
+
+        .controls {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-success {
+            background: #51cf66;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #40c057;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(81, 207, 102, 0.4);
+        }
+
+        .btn-danger {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #fa5252;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        .deliver-form {
+            margin-top: 20px;
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .checkbox-item label {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .error-message {
+            background: #ffe3e3;
+            color: #c92a2a;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            display: none;
+            border-left: 4px solid #ff6b6b;
+        }
+
+        .success-message {
+            background: #d3f9d8;
+            color: #2b8a3e;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            display: none;
+            border-left: 4px solid #51cf66;
+        }
+
+        .loading {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #999;
+            padding: 30px;
+            font-style: italic;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card {
+            animation: fadeIn 0.5s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🍳 キッチンゲーム - 進捗管理</h1>
+        
+        <div class="dashboard">
+            <div class="card">
+                <h2>📊 成功したレシピ数</h2>
+                <div class="stat" id="successCount">-</div>
+            </div>
+            
+            <div class="card">
+                <h2>⏳ 待機中のレシピ数</h2>
+                <div class="stat" id="waitingCount">-</div>
+            </div>
+        </div>
+
+        <div class="dashboard">
+            <div class="card">
+                <h2>📋 待機中のレシピ</h2>
+                <div id="recipesList">
+                    <p class="loading">読み込み中...</p>
+                </div>
+            </div>
+
+            <div class="card controls">
+                <h2>🎮 ゲームコントロール</h2>
+                <div class="button-group">
+                    <button class="btn-primary" onclick="refreshData()">🔄 データ更新</button>
+                    <button class="btn-success" onclick="startGame()">▶️ ゲーム開始</button>
+                    <button class="btn-danger" onclick="stopGame()">⏸️ ゲーム停止</button>
+                </div>
+
+                <div class="deliver-form">
+                    <h3>🍽️ レシピを配達</h3>
+                    <p style="margin: 10px 0; color: #666;">材料を選択してください:</p>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="ingredient-bread" value="Bread">
+                            <label for="ingredient-bread">🍞 Bread</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="ingredient-lettuce" value="Lettuce">
+                            <label for="ingredient-lettuce">🥬 Lettuce</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="ingredient-tomato" value="Tomato">
+                            <label for="ingredient-tomato">🍅 Tomato</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="ingredient-cheese" value="Cheese">
+                            <label for="ingredient-cheese">🧀 Cheese</label>
+                        </div>
+                    </div>
+                    <button class="btn-success" onclick="deliverRecipe()" style="margin-top: 15px; width: 100%;">
+                        🚚 配達する
+                    </button>
+                </div>
+
+                <div class="error-message" id="errorMessage"></div>
+                <div class="success-message" id="successMessage"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:5000/api';
+
+        // エラーメッセージを表示
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = `❌ エラー: ${message}`;
+            errorDiv.style.display = 'block';
+            setTimeout(() => {
+                errorDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        // 成功メッセージを表示
+        function showSuccess(message) {
+            const successDiv = document.getElementById('successMessage');
+            successDiv.textContent = `✅ ${message}`;
+            successDiv.style.display = 'block';
+            setTimeout(() => {
+                successDiv.style.display = 'none';
+            }, 3000);
+        }
+
+        // 進捗データを取得
+        async function fetchProgress() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/progress`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    document.getElementById('successCount').textContent = result.data.successful_recipes;
+                    document.getElementById('waitingCount').textContent = result.data.waiting_recipes_count;
+                } else {
+                    throw new Error(result.error || '進捗データの取得に失敗しました');
+                }
+            } catch (error) {
+                console.error('Error fetching progress:', error);
+                showError(`進捗データの取得に失敗: ${error.message}`);
+                document.getElementById('successCount').textContent = 'エラー';
+                document.getElementById('waitingCount').textContent = 'エラー';
+            }
+        }
+
+        // レシピリストを取得
+        async function fetchRecipes() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/recipes`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    displayRecipes(result.data);
+                } else {
+                    throw new Error(result.error || 'レシピリストの取得に失敗しました');
+                }
+            } catch (error) {
+                console.error('Error fetching recipes:', error);
+                showError(`レシピリストの取得に失敗: ${error.message}`);
+                document.getElementById('recipesList').innerHTML = 
+                    '<p class="empty-state">レシピの取得に失敗しました</p>';
+            }
+        }
+
+        // レシピリストを表示
+        function displayRecipes(recipes) {
+            const recipesDiv = document.getElementById('recipesList');
+            
+            if (recipes.length === 0) {
+                recipesDiv.innerHTML = '<p class="empty-state">待機中のレシピはありません</p>';
+                return;
+            }
+
+            const recipeItems = recipes.map(recipe => {
+                const ingredients = recipe.ingredients.map(ing => 
+                    `<span class="ingredient-tag">${ing.name}</span>`
+                ).join('');
+                
+                return `
+                    <li class="recipe-item">
+                        <div class="recipe-name">${recipe.name}</div>
+                        <div class="ingredients">${ingredients}</div>
+                    </li>
+                `;
+            }).join('');
+
+            recipesDiv.innerHTML = `<ul class="recipe-list">${recipeItems}</ul>`;
+        }
+
+        // データを更新
+        async function refreshData() {
+            await Promise.all([fetchProgress(), fetchRecipes()]);
+            showSuccess('データを更新しました');
+        }
+
+        // レシピを配達
+        async function deliverRecipe() {
+            try {
+                // 選択された材料を取得
+                const checkboxes = document.querySelectorAll('.checkbox-item input[type="checkbox"]:checked');
+                const ingredients = Array.from(checkboxes).map(cb => cb.value);
+
+                if (ingredients.length === 0) {
+                    showError('材料を選択してください');
+                    return;
+                }
+
+                const response = await fetch(`${API_BASE_URL}/deliver`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ ingredients })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+
+                if (result.success) {
+                    if (result.data.delivered) {
+                        showSuccess('✨ レシピの配達に成功しました！');
+                        // チェックボックスをリセット
+                        checkboxes.forEach(cb => cb.checked = false);
+                    } else {
+                        showError('レシピが一致しませんでした');
+                    }
+                    // データを更新
+                    await refreshData();
+                } else {
+                    throw new Error(result.error || 'レシピの配達に失敗しました');
+                }
+            } catch (error) {
+                console.error('Error delivering recipe:', error);
+                showError(`レシピの配達に失敗: ${error.message}`);
+            }
+        }
+
+        // ゲーム開始
+        async function startGame() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/start`, {
+                    method: 'POST'
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showSuccess('ゲームを開始しました');
+                } else {
+                    throw new Error(result.error || 'ゲームの開始に失敗しました');
+                }
+            } catch (error) {
+                console.error('Error starting game:', error);
+                showError(`ゲームの開始に失敗: ${error.message}`);
+            }
+        }
+
+        // ゲーム停止
+        async function stopGame() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/stop`, {
+                    method: 'POST'
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showSuccess('ゲームを停止しました');
+                } else {
+                    throw new Error(result.error || 'ゲームの停止に失敗しました');
+                }
+            } catch (error) {
+                console.error('Error stopping game:', error);
+                showError(`ゲームの停止に失敗: ${error.message}`);
+            }
+        }
+
+        // ページ読み込み時にデータを取得
+        document.addEventListener('DOMContentLoaded', () => {
+            refreshData();
+            // 3秒ごとに自動更新
+            setInterval(refreshData, 3000);
+        });
+    </script>
+</body>
+</html>
