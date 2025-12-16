@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ポモドーロタイマー</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍅</text></svg>">
+</head>
+<body>
+    <div class="container">
+        <!-- ヘッダー -->
+        <header>
+            <h1>🍅 ポモドーロタイマー</h1>
+            <p class="subtitle">集中して作業、しっかり休憩</p>
+        </header>
+
+        <!-- メインタイマーセクション -->
+        <main class="timer-section">
+            <!-- タイマータイプ選択 -->
+            <div class="timer-tabs">
+                <button class="tab-btn active" data-type="work" data-duration="1500">
+                    作業 (25分)
+                </button>
+                <button class="tab-btn" data-type="break" data-duration="300">
+                    休憩 (5分)
+                </button>
+                <button class="tab-btn" data-type="long-break" data-duration="900">
+                    長休憩 (15分)
+                </button>
+            </div>
+
+            <!-- タイマー表示 -->
+            <div class="timer-display">
+                <div class="timer-circle">
+                    <svg class="progress-ring" width="300" height="300">
+                        <circle class="progress-ring-circle-bg" cx="150" cy="150" r="130"></circle>
+                        <circle class="progress-ring-circle" cx="150" cy="150" r="130"></circle>
+                    </svg>
+                    <div class="timer-content">
+                        <div id="timer" class="time-display">25:00</div>
+                        <div id="timer-label" class="timer-label">作業時間</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- コントロールボタン -->
+            <div class="controls">
+                <button id="start-btn" class="btn btn-primary">
+                    <span class="btn-icon">▶</span> スタート
+                </button>
+                <button id="pause-btn" class="btn btn-secondary" disabled>
+                    <span class="btn-icon">⏸</span> 一時停止
+                </button>
+                <button id="reset-btn" class="btn btn-danger">
+                    <span class="btn-icon">↻</span> リセット
+                </button>
+            </div>
+
+            <!-- カスタムタイマー設定 -->
+            <div class="custom-timer">
+                <details>
+                    <summary>⚙️ カスタム設定</summary>
+                    <div class="custom-inputs">
+                        <div class="input-group">
+                            <label for="custom-minutes">分:</label>
+                            <input type="number" id="custom-minutes" min="1" max="60" value="25">
+                        </div>
+                        <div class="input-group">
+                            <label for="custom-seconds">秒:</label>
+                            <input type="number" id="custom-seconds" min="0" max="59" value="0">
+                        </div>
+                        <button id="set-custom-btn" class="btn btn-small">設定</button>
+                    </div>
+                </details>
+            </div>
+        </main>
+
+        <!-- 統計セクション -->
+        <section class="stats-section">
+            <h2>📊 今日の統計</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">🍅</div>
+                    <div class="stat-value" id="stat-pomodoros">{{ stats.completed_pomodoros or 0 }}</div>
+                    <div class="stat-label">完了ポモドーロ</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">☕</div>
+                    <div class="stat-value" id="stat-breaks">{{ stats.completed_breaks or 0 }}</div>
+                    <div class="stat-label">休憩回数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">⏱️</div>
+                    <div class="stat-value" id="stat-work-time">0分</div>
+                    <div class="stat-label">総作業時間</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🎯</div>
+                    <div class="stat-value" id="stat-sessions">{{ stats.sessions_today or 0 }}</div>
+                    <div class="stat-label">今日のセッション</div>
+                </div>
+            </div>
+            <button id="reset-stats-btn" class="btn btn-outline btn-small">統計をリセット</button>
+        </section>
+
+        <!-- 設定セクション -->
+        <section class="settings-section">
+            <h2>⚙️ 設定</h2>
+            <div class="settings-grid">
+                <div class="setting-item">
+                    <label class="switch">
+                        <input type="checkbox" id="notification-toggle" checked>
+                        <span class="slider"></span>
+                    </label>
+                    <span>ブラウザ通知</span>
+                </div>
+                <div class="setting-item">
+                    <label class="switch">
+                        <input type="checkbox" id="sound-toggle" checked>
+                        <span class="slider"></span>
+                    </label>
+                    <span>サウンド通知</span>
+                </div>
+                <div class="setting-item">
+                    <label class="switch">
+                        <input type="checkbox" id="auto-start-break">
+                        <span class="slider"></span>
+                    </label>
+                    <span>自動で休憩開始</span>
+                </div>
+                <div class="setting-item">
+                    <label class="switch">
+                        <input type="checkbox" id="auto-start-work">
+                        <span class="slider"></span>
+                    </label>
+                    <span>自動で作業開始</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- フッター -->
+        <footer>
+            <p>ポモドーロ・テクニック: 25分作業 + 5分休憩 = 1ポモドーロ</p>
+            <p class="version">v1.0.0 | GitHub Copilot Workshop 2025</p>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/timer.js') }}"></script>
+</body>
+</html>

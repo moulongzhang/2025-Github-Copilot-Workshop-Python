@@ -1,9 +1,10 @@
 import math
 
-class Point2D:
-    def __init__(self, x, y):
+class Point3D:
+    def __init__(self, x, y, z):
         self.x = x
         self.y = y
+        self.z = z
 
     def distance_to(self, other):
         dx = self.x - other.x
