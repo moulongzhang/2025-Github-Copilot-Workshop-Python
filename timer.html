@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ポモドーロタイマー</title>
+    <link rel="stylesheet" href="timer.css">
+</head>
+<body>
+    <div class="container">
+        <h1>ポモドーロタイマー</h1>
+        
+        <div class="status-display" id="statusDisplay">停止中</div>
+        
+        <div class="timer-circle">
+            <svg class="progress-ring" width="300" height="300">
+                <circle class="progress-ring-bg" cx="150" cy="150" r="130"></circle>
+                <circle class="progress-ring-circle" id="progressCircle" cx="150" cy="150" r="130"></circle>
+            </svg>
+            <div class="timer-display" id="timerDisplay">25:00</div>
+        </div>
+        
+        <div class="button-group">
+            <button class="btn btn-start" id="startBtn">開始</button>
+            <button class="btn btn-reset" id="resetBtn">リセット</button>
+        </div>
+    </div>
+    
+    <script src="timer.js"></script>
+</body>
+</html>
