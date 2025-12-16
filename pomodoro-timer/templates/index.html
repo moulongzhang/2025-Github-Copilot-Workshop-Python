@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ポモドーロタイマー</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="app-container">
+        <div class="timer-card">
+            <!-- ヘッダー -->
+            <div class="timer-header">
+                <h1>ポモドーロタイマー</h1>
+                <div class="window-controls">
+                    <span>−</span>
+                    <span>□</span>
+                    <span>×</span>
+                </div>
+            </div>
+            
+            <!-- タイマー本体 -->
+            <div class="timer-body">
+                <div id="mode-label" class="mode-label">作業中</div>
+                
+                <!-- 円形タイマー -->
+                <div class="timer-circle-container">
+                    <svg class="timer-circle" viewBox="0 0 220 220">
+                        <!-- 背景円 -->
+                        <circle 
+                            class="timer-circle-bg"
+                            cx="110" 
+                            cy="110" 
+                            r="100"
+                        />
+                        <!-- プログレス円 -->
+                        <circle 
+                            id="progress-circle"
+                            class="timer-circle-progress"
+                            cx="110" 
+                            cy="110" 
+                            r="100"
+                        />
+                    </svg>
+                    <div id="timer-display" class="timer-display">25:00</div>
+                </div>
+                
+                <!-- コントロールボタン -->
+                <div class="timer-controls">
+                    <button id="start-btn" class="btn btn-primary">開始</button>
+                    <button id="reset-btn" class="btn btn-secondary">リセット</button>
+                </div>
+            </div>
+            
+            <!-- 進捗セクション -->
+            <div class="progress-section">
+                <div class="progress-title">今日の進捗</div>
+                <div class="progress-stats">
+                    <div class="stat-item">
+                        <div id="pomodoro-count" class="stat-value">0</div>
+                        <div class="stat-label">完了</div>
+                    </div>
+                    <div class="stat-item">
+                        <div id="focus-time" class="stat-value">0分</div>
+                        <div class="stat-label">集中時間</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="{{ url_for('static', filename='js/timerEngine.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/timer.js') }}"></script>
+</body>
+</html>
