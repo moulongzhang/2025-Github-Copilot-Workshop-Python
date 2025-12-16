@@ -1,11 +1,15 @@
 from flask import Flask, jsonify, request
 import json
 import os
+import threading
 
 app = Flask(__name__)
 
 # In-memory storage for progress data
 progress_data = []
+
+# Thread lock for synchronization
+progress_lock = threading.Lock()
 
 # File path for persistence
 PROGRESS_FILE = 'progress.json'
@@ -46,10 +50,11 @@ def index():
 @app.route('/api/progress', methods=['GET'])
 def get_progress():
     """Get progress data"""
-    return jsonify({
-        "success": True,
-        "data": progress_data
-    })
+    with progress_lock:
+        return jsonify({
+            "success": True,
+            "data": progress_data.copy()
+        })
 
 @app.route('/api/progress', methods=['POST'])
 def post_progress():
@@ -63,8 +68,9 @@ def post_progress():
                 "error": "No data provided"
             }), 400
         
-        progress_data.append(data)
-        save_progress()
+        with progress_lock:
+            progress_data.append(data)
+            save_progress()
         
         return jsonify({
             "success": True,
