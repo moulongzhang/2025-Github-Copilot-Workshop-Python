@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ポモドーロタイマー</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>ポモドーロタイマー</h1>
+        <div class="state-label" id="state-label">作業</div>
+        <div class="circle-timer-wrapper">
+            <svg id="circle-timer" width="220" height="220">
+                <circle cx="110" cy="110" r="100" stroke="#eee" stroke-width="16" fill="none" />
+                <circle id="timer-progress" cx="110" cy="110" r="100" stroke="#e74c3c" stroke-width="16" fill="none" stroke-linecap="round" transform="rotate(-90 110 110)" />
+                <text id="timer-display" x="110" y="125" text-anchor="middle" font-size="48" fill="#e74c3c" font-family="'Segoe UI', 'Meiryo', sans-serif">25:00</text>
+            </svg>
+        </div>
+        <div class="session-info">
+            <div class="session-count">完了セッション: <span id="completed-sessions">0</span></div>
+            <div class="session-remaining">次の長休憩まで: <span id="sessions-until-long-break">4</span></div>
+            <div class="progress-indicator">
+                <div class="progress-dot" id="dot-1"></div>
+                <div class="progress-dot" id="dot-2"></div>
+                <div class="progress-dot" id="dot-3"></div>
+                <div class="progress-dot" id="dot-4"></div>
+            </div>
+        </div>
+        <div class="button-group">
+            <button id="start-btn">スタート</button>
+            <button id="stop-btn">ストップ</button>
+            <button id="reset-btn">リセット</button>
+        </div>
+        <div class="settings-toggle">
+            <button id="settings-btn">⚙️ 設定</button>
+        </div>
+        <div class="settings-panel" id="settings-panel">
+            <h3>設定</h3>
+            <div class="setting-item">
+                <label>作業時間（分）:</label>
+                <input type="number" id="work-time" value="25" min="1" max="60">
+            </div>
+            <div class="setting-item">
+                <label>短い休憩（分）:</label>
+                <input type="number" id="short-break-time" value="5" min="1" max="30">
+            </div>
+            <div class="setting-item">
+                <label>長い休憩（分）:</label>
+                <input type="number" id="long-break-time" value="15" min="1" max="60">
+            </div>
+            <div class="setting-item">
+                <label>長休憩の間隔:</label>
+                <input type="number" id="sessions-before-long-break" value="4" min="2" max="10">
+            </div>
+            <div class="setting-item">
+                <label>通知音:</label>
+                <input type="checkbox" id="sound-enabled" checked>
+            </div>
+            <div class="setting-item">
+                <label>ブラウザ通知:</label>
+                <input type="checkbox" id="notification-enabled" checked>
+            </div>
+            <button id="save-settings-btn">保存</button>
+        </div>
+        <div class="history-section">
+            <h3>今日の履歴</h3>
+            <div id="history-list"></div>
+            <button id="clear-history-btn">履歴をクリア</button>
+        </div>
+    </div>
+    <script src="/static/js/timer_class.js"></script>
+    <script src="/static/js/timer.js"></script>
+</body>
+</html>
