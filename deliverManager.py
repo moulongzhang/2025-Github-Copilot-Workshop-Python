@@ -123,11 +123,6 @@ class KitchenGameManager:
 
 
 class DeliveryManager:
-    def get_recipe_by_name(self, user_input):
-        query = f"SELECT * FROM recipes WHERE name = '{user_input}'"
-        print(f"実行クエリ: {query}")
-        return query
-    
     """配達管理クラス（Python版）"""
     
     _instance: Optional['DeliveryManager'] = None
