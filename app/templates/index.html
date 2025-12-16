@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}Pomodoro Timer - 集中力を高める{% endblock %}
+
+{% block content %}
+<div class="container">
+    <header class="app-header">
+        <h1>🍅 Pomodoro Timer</h1>
+        <p class="subtitle">集中力を高めて生産性を向上させましょう</p>
+    </header>
+    
+    <main class="timer-container">
+        <!-- Timer Display -->
+        <div class="timer-display">
+            <div class="session-type" id="sessionType">Work</div>
+            <div class="time" id="timeDisplay">25:00</div>
+            <div class="session-counter">
+                Session <span id="sessionCount">1</span> of 4
+            </div>
+        </div>
+        
+        <!-- Progress Ring (will be added in Stage 1) -->
+        <div class="progress-ring-container">
+            <svg class="progress-ring" width="300" height="300">
+                <circle class="progress-ring-circle" 
+                        stroke="currentColor" 
+                        stroke-width="8" 
+                        fill="transparent"
+                        r="140" 
+                        cx="150" 
+                        cy="150"/>
+            </svg>
+        </div>
+        
+        <!-- Controls -->
+        <div class="controls">
+            <button id="startBtn" class="btn btn-primary" aria-label="タイマーを開始">
+                開始
+            </button>
+            <button id="pauseBtn" class="btn btn-secondary" aria-label="タイマーを一時停止" disabled>
+                一時停止
+            </button>
+            <button id="resetBtn" class="btn btn-tertiary" aria-label="タイマーをリセット">
+                リセット
+            </button>
+        </div>
+        
+        <!-- Session Info -->
+        <div class="session-info">
+            <p>ポモドーロテクニックで集中力を維持しましょう！</p>
+            <ul>
+                <li>25分間集中して作業</li>
+                <li>5分間の短い休憩</li>
+                <li>4セッション後に15分間の長い休憩</li>
+            </ul>
+        </div>
+    </main>
+    
+    <footer class="app-footer">
+        <p>Stage 0: プロジェクトセットアップ完了 ✓</p>
+    </footer>
+</div>
+{% endblock %}
