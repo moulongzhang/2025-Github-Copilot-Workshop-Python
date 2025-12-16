@@ -69,7 +69,6 @@ class PomodoroTimer {
     start() {
         this.state = STATE.RUNNING;
         this.startBtn.textContent = '一時停止';
-        this.startBtn.classList.add('running');
         
         this.timerInterval = setInterval(() => {
             this.tick();
@@ -113,13 +112,15 @@ class PomodoroTimer {
                 this.timeLeft = CONFIG.LONG_BREAK_TIME;
                 this.totalTime = CONFIG.LONG_BREAK_TIME;
                 this.updateStatusText('長休憩');
-                this.timerCard.className = 'timer-card long-break';
+                this.timerCard.classList.remove('working', 'break');
+                this.timerCard.classList.add('long-break');
             } else {
                 this.mode = MODE.BREAK;
                 this.timeLeft = CONFIG.BREAK_TIME;
                 this.totalTime = CONFIG.BREAK_TIME;
                 this.updateStatusText('休憩中');
-                this.timerCard.className = 'timer-card break';
+                this.timerCard.classList.remove('working', 'long-break');
+                this.timerCard.classList.add('break');
             }
         } else {
             // After break, go back to work
@@ -127,7 +128,8 @@ class PomodoroTimer {
             this.timeLeft = CONFIG.WORK_TIME;
             this.totalTime = CONFIG.WORK_TIME;
             this.updateStatusText('作業中');
-            this.timerCard.className = 'timer-card working';
+            this.timerCard.classList.remove('break', 'long-break');
+            this.timerCard.classList.add('working');
         }
         
         this.state = STATE.IDLE;
@@ -143,7 +145,8 @@ class PomodoroTimer {
         this.totalTime = CONFIG.WORK_TIME;
         this.startBtn.textContent = '開始';
         this.updateStatusText('作業中');
-        this.timerCard.className = 'timer-card working';
+        this.timerCard.classList.remove('break', 'long-break');
+        this.timerCard.classList.add('working');
         this.updateDisplay();
     }
     
