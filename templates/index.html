@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ポモドーロタイマー</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <h1 class="app-title">ポモドーロタイマー</h1>
+        
+        <div class="timer-section">
+            <div class="timer-status">作業中</div>
+            <div class="timer-display">
+                <div id="timer-text" class="timer-text">25:00</div>
+            </div>
+        </div>
+        
+        <div class="button-group">
+            <button id="start-btn" class="btn btn-primary">開始</button>
+            <button id="reset-btn" class="btn btn-secondary">リセット</button>
+        </div>
+        
+        <div class="stats-section">
+            <h3>今日の進捗</h3>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span id="completed-count" class="stat-value">0</span>
+                    <span class="stat-label">完了</span>
+                </div>
+                <div class="stat-item">
+                    <span id="total-time" class="stat-value">0時間0分</span>
+                    <span class="stat-label">集中時間</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/static/js/timer.js"></script>
+</body>
+</html>
