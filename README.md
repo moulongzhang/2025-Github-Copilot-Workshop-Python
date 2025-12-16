@@ -28,6 +28,12 @@ It's a Python port of the logic from the Unity game "Kitchen Chaos".
 ### 基本的な実行 / Basic Execution
 
 ```bash
+# メインゲームを実行（統合デモ）
+python3 main.py
+
+# サンプルコード集を実行（各機能の個別デモ）
+python3 examples.py
+
 # 配達マネージャーのデモを実行
 python3 deliverManager.py
 
@@ -115,11 +121,13 @@ for i in range(11):
 .
 ├── README.md                   # このファイル / This file
 ├── main.py                     # メインエントリーポイント / Main entry point
+├── examples.py                 # サンプルコード集 / Example code collection
 ├── deliverManager.py           # 配達マネージャー / Delivery manager
 ├── point.py                    # 2D座標クラス / 2D point class
 ├── settings_manager.py         # 設定管理 / Settings management
 ├── notification_system.py      # 通知システム / Notification system
 ├── visual_effects.py           # ビジュアルエフェクト / Visual effects
+├── API_DOCUMENTATION.md        # APIドキュメント / API documentation
 └── game_settings.json          # ゲーム設定ファイル / Game settings file (auto-generated)
 ```
 
