@@ -297,7 +297,8 @@
     </div>
 
     <script>
-        const API_BASE_URL = 'http://localhost:5000/api';
+        // Use relative URL or current host for API
+        const API_BASE_URL = `${window.location.protocol}//${window.location.host}/api`;
 
         // エラーメッセージを表示
         function showError(message) {

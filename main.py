@@ -32,13 +32,12 @@ delivery_manager = DeliveryManager.get_instance(recipe_list)
 
 # Background thread to update delivery manager
 update_thread = None
-should_stop = False
+stop_event = threading.Event()
 
 
 def update_loop():
     """Background thread to update the delivery manager"""
-    global should_stop
-    while not should_stop:
+    while not stop_event.is_set():
         delivery_manager.update()
         time.sleep(0.1)  # Update every 100ms
 
@@ -179,8 +178,8 @@ def stop_game():
 
 def start_background_thread():
     """Start the background update thread"""
-    global update_thread, should_stop
-    should_stop = False
+    global update_thread
+    stop_event.clear()
     update_thread = threading.Thread(target=update_loop, daemon=True)
     update_thread.start()
 
@@ -191,4 +190,5 @@ if __name__ == '__main__':
     
     # Run the Flask app
     port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port, debug=True, use_reloader=False)
+    debug_mode = os.environ.get('FLASK_DEBUG', 'False').lower() == 'true'
+    app.run(host='0.0.0.0', port=port, debug=debug_mode, use_reloader=False)
