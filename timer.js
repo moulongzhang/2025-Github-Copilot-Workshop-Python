@@ -17,6 +17,14 @@ class PomodoroTimer {
         // 円の周の長さを計算 (2πr, r=130)
         this.circumference = 2 * Math.PI * 130;
         
+        // AudioContextを1回だけ作成
+        this.audioContext = null;
+        try {
+            this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        } catch (e) {
+            console.warn('Web Audio API not supported:', e);
+        }
+        
         // イベントリスナーの設定
         this.startBtn.addEventListener('click', () => this.toggleTimer());
         this.resetBtn.addEventListener('click', () => this.resetTimer());
@@ -51,7 +59,7 @@ class PomodoroTimer {
                 // タイマー終了
                 this.stopTimer();
                 this.playSound();
-                alert('ポモドーロ完了！お疲れ様でした！');
+                this.showNotification('ポモドーロ完了！お疲れ様でした！');
             }
         }, 1000);
     }
@@ -106,24 +114,39 @@ class PomodoroTimer {
         this.progressCircle.style.strokeDashoffset = offset;
     }
     
-    // 音を鳴らす（オプション）
+    // 通知を表示
+    showNotification(message) {
+        // ブラウザの通知APIを試す
+        if ('Notification' in window && Notification.permission === 'granted') {
+            new Notification('ポモドーロタイマー', { body: message });
+        } else {
+            // フォールバックとしてコンソールログ
+            console.log('Timer Complete:', message);
+        }
+    }
+    
+    // 音を鳴らす
     playSound() {
-        // ブラウザのビープ音を使用
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        const oscillator = audioContext.createOscillator();
-        const gainNode = audioContext.createGain();
+        if (!this.audioContext) return;
         
-        oscillator.connect(gainNode);
-        gainNode.connect(audioContext.destination);
-        
-        oscillator.frequency.value = 800;
-        oscillator.type = 'sine';
-        
-        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
-        
-        oscillator.start(audioContext.currentTime);
-        oscillator.stop(audioContext.currentTime + 0.5);
+        try {
+            const oscillator = this.audioContext.createOscillator();
+            const gainNode = this.audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(this.audioContext.destination);
+            
+            oscillator.frequency.value = 800;
+            oscillator.type = 'sine';
+            
+            gainNode.gain.setValueAtTime(0.3, this.audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.5);
+            
+            oscillator.start(this.audioContext.currentTime);
+            oscillator.stop(this.audioContext.currentTime + 0.5);
+        } catch (e) {
+            console.warn('Failed to play sound:', e);
+        }
     }
 }
 
