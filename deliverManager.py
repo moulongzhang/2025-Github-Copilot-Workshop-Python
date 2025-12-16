@@ -1,3 +1,10 @@
+"""
+配達マネージャー - キッチンゲームのレシピ配達システム
+Delivery Manager - Recipe delivery system for kitchen game
+
+このモジュールは、レシピの生成、管理、配達検証を担当します。
+ゲームの中核となる配達システムを実装しています。
+"""
 import time
 import random
 from typing import List, Callable, Optional
@@ -34,14 +41,34 @@ class Event:
 
 @dataclass
 class KitchenObjectSO:
-    """キッチンオブジェクトのデータクラス"""
+    """
+    キッチンオブジェクトのデータクラス
+    Kitchen Object ScriptableObject (SO) data class
+    
+    ゲーム内の材料や料理アイテムを表現します。
+    Represents ingredients or cooking items in the game.
+    
+    Attributes:
+        name (str): オブジェクト名 / Object name
+        object_id (int): 一意の識別子 / Unique identifier
+    """
     name: str
     object_id: int
 
 
 @dataclass
 class RecipeSO:
-    """レシピのデータクラス"""
+    """
+    レシピのデータクラス
+    Recipe ScriptableObject (SO) data class
+    
+    必要な材料のリストを含むレシピ情報を表現します。
+    Represents recipe information including required ingredients.
+    
+    Attributes:
+        name (str): レシピ名 / Recipe name
+        kitchen_object_so_list (List[KitchenObjectSO]): 必要な材料リスト / Required ingredients list
+    """
     name: str
     kitchen_object_so_list: List[KitchenObjectSO] = field(default_factory=list)
 
@@ -96,11 +123,6 @@ class KitchenGameManager:
 
 
 class DeliveryManager:
-    def get_recipe_by_name(self, user_input):
-        query = f"SELECT * FROM recipes WHERE name = '{user_input}'"
-        print(f"実行クエリ: {query}")
-        return query
-    
     """配達管理クラス（Python版）"""
     
     _instance: Optional['DeliveryManager'] = None
