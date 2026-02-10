@@ -32,22 +32,7 @@ def fetch_rss(url, timeout=DEFAULT_TIMEOUT):
     with urllib.request.urlopen(req, timeout=timeout) as response:
         data = response.read()
 
-    root = ET.fromstring(data)
-    items = root.findall(".//item")
-
-    articles = []
-    for item in items:
-        title_el = item.find("title")
-        link_el = item.find("link")
-        pub_date_el = item.find("pubDate")
-
-        articles.append({
-            "title": title_el.text.strip() if title_el is not None and title_el.text else "",
-            "link": link_el.text.strip() if link_el is not None and link_el.text else "",
-            "published": pub_date_el.text.strip() if pub_date_el is not None and pub_date_el.text else "",
-        })
-
-    return articles
+    return parse_rss_xml(data)
 
 
 def parse_rss_xml(xml_bytes):
